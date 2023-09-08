@@ -48,7 +48,7 @@ fn (mut v V8080) exec_ins() {
         0x5 { v.util_setreg_b(v.util_dec(v.reg.b)) }
         0x6 { v.util_setreg_b(v.mem_fetch_nextbyte()) }
         0x7 {
-            v.flag.cf = if (v.reg.a >> 0x7) == 0x1 { true } else { false }
+            v.flag.cf = if (v.reg.a >> 0x4) == 0x1 { true } else { false }
             v.reg.a = u8((v.reg.a << 1) + (v.reg.a >> 0x7))
         
         }
@@ -61,7 +61,7 @@ fn (mut v V8080) exec_ins() {
         0xe { v.util_setreg_c(v.mem_fetch_nextbyte()) }
         0xf { 
             v.flag.cf = if (v.reg.a & 0x1) == 0x1 { true } else { false }
-            v.reg.a = u8(v.reg.a >> 1) + u8(v.reg.a >> 7)
+            v.reg.a = u8(v.reg.a >> 1) + u8(v.reg.a >> 4)
         
         }
         0x10 { println("ToImplement") }

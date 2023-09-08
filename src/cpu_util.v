@@ -1,55 +1,55 @@
 module main
 
 fn (mut v V8080) util_setreg_b(data u8) {
-    v.reg.b = u8(data & 0xff)
-    v.reg.bc = u16((v.reg.b << 7) + v.reg.c)
+    v.reg.b = data
+    v.reg.bc = u16(v.reg.b | v.reg.c)
 }
 
 fn (mut v V8080) util_setreg_c(data u8) {
-    v.reg.c = u8(data & 0xff)
-    v.reg.bc = u16((v.reg.b << 7) + v.reg.c)
+    v.reg.c = data
+    v.reg.bc = u16(v.reg.b | v.reg.c)
 }
 
 fn (mut v V8080) util_setreg_d(data u8) {
-	v.reg.d = u8(data & 0xff)
-	v.reg.de = u16((v.reg.d << 7) + v.reg.e)
+    v.reg.d = data
+    v.reg.de = u16(v.reg.d | v.reg.e)
 }
 
 fn (mut v V8080) util_setreg_e(data u8) {
-	v.reg.e = u8(data & 0xff)
-	v.reg.de = u16((v.reg.d << 7) + v.reg.e)
+    v.reg.e = data
+    v.reg.de = u16(v.reg.d | v.reg.e)
 }
 
 fn (mut v V8080) util_setreg_h(data u8) {
-	v.reg.h = u8(data & 0xff)
-	v.reg.hl = u16((v.reg.h << 7) + v.reg.l)
+    v.reg.h = data
+    v.reg.hl = u16(v.reg.h | v.reg.l)
 }
 
 fn (mut v V8080) util_setreg_l(data u8) {
-	v.reg.l = u8(data & 0xff)
-	v.reg.hl = u16((v.reg.h << 7) + v.reg.l)
+    v.reg.l = data
+    v.reg.hl = u16(v.reg.h | v.reg.l)
 }
 
 fn (mut v V8080) util_setreg_bc(data u16) {
-	v.reg.bc = u16(data & 0xffff)
-	v.reg.b = u8(v.reg.bc >> 7)
+    v.reg.bc = data
+    v.reg.b = u8(v.reg.bc >> 8) & 0xff
     v.reg.c = u8(v.reg.bc & 0xff)
 }
 
 fn (mut v V8080) util_setreg_de(data u16) {
-	v.reg.de = u16(data & 0xffff)
-	v.reg.d = u8(v.reg.de >> 7)
+    v.reg.de = data
+    v.reg.d = u8(v.reg.de >> 8) & 0xff
     v.reg.e = u8(v.reg.de & 0xff)
 }
 
 fn (mut v V8080) util_setreg_hl(data u16) {
-	v.reg.hl = u16(data & 0xffff)
-	v.reg.h = u8(v.reg.hl >> 7)
+    v.reg.hl = data
+    v.reg.h = u8(v.reg.hl >> 8) & 0xff
     v.reg.l = u8(v.reg.hl & 0xff)
 }
 
 fn (mut v V8080) util_addreg_hl(data u16) {
-	val := u16(v.reg.hl + data)
+    val := u16(v.reg.hl + data)
     v.util_setreg_hl(val)
     if val > 0xffff {
         v.flag.cf = true
@@ -57,7 +57,7 @@ fn (mut v V8080) util_addreg_hl(data u16) {
 }
 
 fn (mut v V8080) util_inc(data u8) u8 {
-	val := u8((data + 1) & 0xff)
+    val := data + 1
     v.flag.zf = if val == 0 { true } else { false }
     v.flag.sf = if (val & 0x80) > 0 { true } else { false }
     v.flag.af = if data == 0xf { true } else { false }
@@ -67,7 +67,7 @@ fn (mut v V8080) util_inc(data u8) u8 {
 }
 
 fn (mut v V8080) util_dec(data u8) u8 {
-	val := u8((data - 1) & 0xff)
+    val := data - 1
     v.flag.zf = if val == 0 { true } else { false }
     v.flag.sf = if (val & 0x80) > 0 { true } else { false }
     v.flag.af = if (data & 0x0f) == 0 { true } else { false }
@@ -77,12 +77,12 @@ fn (mut v V8080) util_dec(data u8) u8 {
 }
 
 fn (mut v V8080) util_and(val u8) {
-	if val > 0xff {
+    if val > 0xff {
         println("Bitwise AND value error")
         exit(1)
     }
 
-    v.reg.a = (v.reg.a & val) & 0xff
+    v.reg.a &= val
     v.flag.cf = true
     v.flag.zf = if v.reg.a == 0 { true } else { false }
     v.flag.sf = if (v.reg.a & 0x80) > 0 { true } else { false }
